@@ -5,26 +5,6 @@
     <script type="text/javascript" src="https://web.squarecdn.com/v1/square.js"></script>
 
     <script>
-        function checkConnection() {
-            fetch('http://localhost:8080/')
-                .then(response => {
-                    if (response.ok) {
-                        const body = 'yes i was ina cult';
-                        const paymentResponse = await fetch('http://localhost:8080/',
-                            {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', }, body,
-                            });
-
-                        window.alert('Connection successful');
-                    }
-                    else { window.alert('Failed to connect:', response.statusText); }
-                })
-                .catch(error => { window.alert('Failed to connect:', error.message); });
-        } window.addEventListener('DOMContentLoaded', checkConnection);
-    </script>
-
-    <script>
         const appId = 'sq0idp-PY4VamgC3T2exiDYhwYZow';
         const locationId = 'LN6RZRPAYQ028';
 
@@ -132,16 +112,16 @@
                     cardButton.disabled = true;
                     try {
                         const token = await tokenize(card);
-                        window.alert('card tokenized');
+                        //window.alert('card tokenized');
 
                         const verificationToken = await verifyBuyer(payments, token);
-                        window.alert('buyer verified');
+                        //window.alert('buyer verified');
 
                         const paymentResults = await createPayment(token, verificationToken);
-                        window.alert('payment created');
+                        //window.alert('payment created');
 
-                        displayPaymentResults('SUCCESS');
-                        window.alert('Payment Success', paymentResults);
+                        //displayPaymentResults('SUCCESS');
+                        //window.alert('Payment Success', paymentResults);
 
                         CallBackData(paymentResults);
                     }
@@ -186,7 +166,6 @@
             <input type="email" id="email" name="email" required>
         </div>
         <button id="card-button" type="button">Buy Covened Bot Premium by Juicy Puicy</button>
-        <button id="connected-button" type="button">Check Connection to Local Host</button>
     </form>
 </body>
 </html>
