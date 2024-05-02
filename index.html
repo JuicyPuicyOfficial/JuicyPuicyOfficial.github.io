@@ -54,9 +54,7 @@
 
         // status is either SUCCESS or FAILURE;
         function displayPaymentResults(status) {
-            const statusContainer = document.getElementById(
-                'payment-status-container',
-            );
+            const statusContainer = document.getElementById('payment-status-container');
             if (status === 'SUCCESS') {
                 statusContainer.classList.remove('is-failure');
                 statusContainer.classList.add('is-success');
@@ -99,7 +97,12 @@
                         const paymentResults = await createPayment(token);
                         displayPaymentResults('SUCCESS');
 
+                        // Now that payment is successful, you can perform additional actions here
                         console.debug('Payment Success', paymentResults);
+
+                        // Example: Do something with paymentResults or perform additional tasks
+                        // For now, we'll just log the paymentResults
+                        console.debug('Payment Results:', paymentResults);
                     } catch (error) {
                         cardButton.disabled = false;
                         displayPaymentResults('FAILURE');
