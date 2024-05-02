@@ -15,10 +15,8 @@
 
         async function tokenize(paymentMethod) {
             const tokenResult = await paymentMethod.tokenize();
-            if (tokenResult.status === 'OK')
-            { return tokenResult.token; }
-            else
-            {
+            if (tokenResult.status === 'OK') { return tokenResult.token; }
+            else {
                 let errorMessage = `Tokenization failed with status: ${tokenResult.status}`;
                 if (tokenResult.errors) {
                     errorMessage += ` and errors: ${JSON.stringify(tokenResult.errors)}`;
@@ -28,8 +26,7 @@
             }
         }
 
-        async function verifyBuyer(payments, token)
-        {
+        async function verifyBuyer(payments, token) {
             const GivenName = document.getElementById('given-name').value;
             const FamilyName = document.getElementById('family-name').value;
             const Email = document.getElementById('email').value;
@@ -52,15 +49,14 @@
             return verificationResults.token;
         }
 
-        async function createPayment(token, verificationToken)
-        {
+        async function createPayment(token, verificationToken) {
             const body = JSON.stringify(
-            {
-                locationId,
-                sourceId: token,
-                verificationToken,
-                idempotencyKey: window.crypto.randomUUID(),
-            });
+                {
+                    locationId,
+                    sourceId: token,
+                    verificationToken,
+                    idempotencyKey: window.crypto.randomUUID(),
+                });
 
             if (paymentResponse.ok) {
                 return paymentResponse.json();
@@ -71,56 +67,34 @@
             window.alert(errorBody);
         }
 
-        function displayPaymentResults(status) {
-            const statusContainer = document.getElementById(
-                'payment-status-container',
-            );
-            if (status === 'SUCCESS') {
-                statusContainer.classList.remove('is-failure');
-                statusContainer.classList.add('is-success');
-            } else {
-                statusContainer.classList.remove('is-success');
-                statusContainer.classList.add('is-failure');
-            }
-
-            statusContainer.style.visibility = 'visible';
-        }
-
         document.addEventListener('DOMContentLoaded', async function () {
             try {
-                if (!window.Square)
-                {
+                if (!window.Square) {
                     window.alert('window not square');
                     throw new Error('Square.js failed to load properly');
                 }
 
                 let payments;
 
-                try
-                { payments = window.Square.payments(appId, locationId); }
-                catch (error)
-                {
+                try { payments = window.Square.payments(appId, locationId); }
+                catch (error) {
                     window.alert('Failed to initialize Square payments');
                     throw new Error('Failed to initialize Square payments: ' + error.message);
                 }
 
                 let card;
 
-                try
-                { card = await initializeCard(payments); }
-                catch (error)
-                {
+                try { card = await initializeCard(payments); }
+                catch (error) {
                     window.alert('Failed to intialize card');
                     throw new Error('Failed to initialize card: ' + error.message);
                 }
 
                 const cardButton = document.getElementById('card-button');
-                cardButton.addEventListener('click', async function (event)
-                {
+                cardButton.addEventListener('click', async function (event) {
                     event.preventDefault();
                     cardButton.disabled = true;
-                    try
-                    {
+                    try {
                         const token = await tokenize(card);
                         window.alert('card tokenized');
 
@@ -130,13 +104,11 @@
                         //const paymentResults = await createPayment(token, verificationToken);
                         //window.alert('payment created');
 
-                        displayPaymentResults('SUCCESS');
-                        window.alert('Payment Success', paymentResults);
+                        await CallBack(token);
 
-                        await CallBack(paymentResults);
+                        //await CallBack(paymentResults);
                     }
-                    catch (error)
-                    {
+                    catch (error) {
                         cardButton.disabled = false;
                         displayPaymentResults('FAILURE');
                         window.alert('Payment failed');
@@ -146,44 +118,47 @@
             } catch (error) { window.alert(error.message); }
         });
 
-        async function CallBack(paymentResults)
-        {
-            const body = JSON.stringify(paymentResults);
+        async function CallBack(result) {
+            const body = JSON.stringify(result);
             const paymentResponse = await fetch('http://localhost:8080/',
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', }, body,
-            });
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', }, body,
+                });
 
-            if (paymentResponse.ok)
-            { window.alert('Payment results sent successfully.'); }
-            else
-            {
+            if (paymentResponse.ok) { window.alert('Payment results sent successfully.'); }
+            else {
                 const errorBody = await paymentResponse.text();
                 window.alert('Failed to send payment results: ' + errorBody);
             }
         }
+    </script>
+    <script>
+        function checkConnection() {
+            fetch('http://localhost:8080/')
+                .then(response => {
+                    if (response.ok) {
+                        window.alert('Connection successful');
+                    } else {
+                        window.alert('Failed to connect:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    window.alert('Failed to connect:', error.message);
+                });
+        }
+
+        window.addEventListener('DOMContentLoaded', checkConnection);
     </script>
 </head>
 <body>
     <form id="payment-form">
         <div id="card-container"></div>
         <div>
-            <label for="given-name">First Name:</label>
-            <input type="text" id="given-name" name="given-name" required>
-        </div>
-        <div>
-            <label for="family-name">Last Name:</label>
-            <input type="text" id="family-name" name="family-name" required>
-        </div>
-        <div>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
         </div>
         <button id="card-button" type="button">Buy Covened Bot Premium by Juicy Puicy</button>
     </form>
-    <div id="payment-status-container"></div>
-
-    <div id="payment-status-container"></div>
 </body>
 </html>
