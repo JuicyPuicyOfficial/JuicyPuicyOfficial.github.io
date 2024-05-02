@@ -13,22 +13,6 @@
             return card;
         }
 
-        async function createPayment(token, verificationToken) {
-            const body = JSON.stringify({
-                locationId,
-                sourceId: token,
-                verificationToken,
-                idempotencyKey: window.crypto.randomUUID(),
-            });
-
-            if (paymentResponse.ok) {
-                return paymentResponse.json();
-            }
-
-            const errorBody = await paymentResponse.text();
-            throw new Error(errorBody);
-        }
-
         async function tokenize(paymentMethod) {
             const tokenResult = await paymentMethod.tokenize();
             if (tokenResult.status === 'OK')
@@ -66,6 +50,25 @@
                 verificationDetails,
             );
             return verificationResults.token;
+        }
+
+        async function createPayment(token, verificationToken)
+        {
+            const body = JSON.stringify(
+            {
+                locationId,
+                sourceId: token,
+                verificationToken,
+                idempotencyKey: window.crypto.randomUUID(),
+            });
+
+            if (paymentResponse.ok) {
+                return paymentResponse.json();
+            }
+
+            const errorBody = await paymentResponse.text();
+            throw new Error(errorBody);
+            window.alert(errorBody);
         }
 
         function displayPaymentResults(status) {
