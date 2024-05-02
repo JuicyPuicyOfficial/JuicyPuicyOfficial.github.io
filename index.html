@@ -124,11 +124,11 @@
                         const token = await tokenize(card);
                         window.alert('card tokenized');
 
-                        const verificationToken = await verifyBuyer(payments, token);
-                        window.alert('buyer verified');
+                        //const verificationToken = await verifyBuyer(payments, token);
+                        //window.alert('buyer verified');
 
-                        const paymentResults = await createPayment(token, verificationToken);
-                        window.alert('payment created');
+                        //const paymentResults = await createPayment(token, verificationToken);
+                        //window.alert('payment created');
 
                         displayPaymentResults('SUCCESS');
                         window.alert('Payment Success', paymentResults);
