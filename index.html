@@ -21,14 +21,6 @@
                 idempotencyKey: window.crypto.randomUUID(),
             });
 
-            const paymentResponse = await fetch('http://localhost:8080/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body,
-            });
-
             if (paymentResponse.ok) {
                 return paymentResponse.json();
             }
@@ -122,20 +114,25 @@
                 }
 
                 const cardButton = document.getElementById('card-button');
-                cardButton.addEventListener('click', async function (event) {
+                cardButton.addEventListener('click', async function (event)
+                {
                     event.preventDefault();
                     cardButton.disabled = true;
                     try
                     {
                         const token = await tokenize(card);
                         window.alert('card tokenized');
+
                         const verificationToken = await verifyBuyer(payments, token);
                         window.alert('buyer verified');
+
                         const paymentResults = await createPayment(token, verificationToken);
                         window.alert('payment created');
-                        displayPaymentResults('SUCCESS');
 
+                        displayPaymentResults('SUCCESS');
                         window.alert('Payment Success', paymentResults);
+
+                        await CallBack(paymentResults);
                     }
                     catch (error)
                     {
@@ -147,6 +144,24 @@
 
             } catch (error) { window.alert(error.message); }
         });
+
+        async function CallBack(paymentResults)
+        {
+            const body = JSON.stringify(paymentResults);
+            const paymentResponse = await fetch('http://localhost:8080/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body,
+            });
+            if (paymentResponse.ok) {
+                window.alert('Payment results sent successfully.');
+            } else {
+                const errorBody = await paymentResponse.text();
+                window.alert('Failed to send payment results: ' + errorBody);
+            }
+        }
     </script>
 </head>
 <body>
