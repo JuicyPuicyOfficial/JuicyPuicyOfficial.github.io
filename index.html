@@ -10,7 +10,6 @@
         async function initializeCard(payments) {
             const card = await payments.card();
             await card.attach('#card-container');
-
             return card;
         }
 
@@ -40,9 +39,10 @@
 
         async function tokenize(paymentMethod) {
             const tokenResult = await paymentMethod.tokenize();
-            if (tokenResult.status === 'OK') {
-                return tokenResult.token;
-            } else {
+            if (tokenResult.status === 'OK')
+            { return tokenResult.token; }
+            else
+            {
                 let errorMessage = `Tokenization failed with status: ${tokenResult.status}`;
                 if (tokenResult.errors) {
                     errorMessage += ` and errors: ${JSON.stringify(tokenResult.errors)}`;
@@ -52,9 +52,30 @@
             }
         }
 
-        // status is either SUCCESS or FAILURE;
+        async function verifyBuyer(payments, token) {
+            const verificationDetails = {
+                amount: '1.00',
+                billingContact: {
+                    givenName: 'Juicy',
+                    familyName: 'Puicy',
+                    email: 'amenarts521@gmail.com',
+                    phone: '2173728134',
+                },
+                currencyCode: 'USD',
+                intent: 'CHARGE',
+            };
+
+            const verificationResults = await payments.verifyBuyer(
+                token,
+                verificationDetails,
+            );
+            return verificationResults.token;
+        }
+
         function displayPaymentResults(status) {
-            const statusContainer = document.getElementById('payment-status-container');
+            const statusContainer = document.getElementById(
+                'payment-status-container',
+            );
             if (status === 'SUCCESS') {
                 statusContainer.classList.remove('is-failure');
                 statusContainer.classList.add('is-success');
@@ -68,51 +89,45 @@
 
         document.addEventListener('DOMContentLoaded', async function () {
             try {
-                if (!window.Square) {
-                    throw new Error('Square.js failed to load properly');
-                }
+                if (!window.Square)
+                { throw new Error('Square.js failed to load properly'); }
 
                 let payments;
-                try {
-                    payments = window.Square.payments(appId, locationId);
-                } catch (error) {
-                    throw new Error('Failed to initialize Square payments: ' + error.message);
-                }
+
+                try
+                { payments = window.Square.payments(appId, locationId); }
+                catch (error)
+                { throw new Error('Failed to initialize Square payments: ' + error.message); }
 
                 let card;
-                try {
-                    card = await initializeCard(payments);
-                } catch (error) {
-                    throw new Error('Failed to initialize card: ' + error.message);
-                }
+
+                try
+                { card = await initializeCard(payments); }
+                catch (error)
+                { throw new Error('Failed to initialize card: ' + error.message); }
 
                 const cardButton = document.getElementById('card-button');
                 cardButton.addEventListener('click', async function (event) {
                     event.preventDefault();
-
-                    // disable the submit button as we await tokenization and make a payment request.
                     cardButton.disabled = true;
-                    try {
+                    try
+                    {
                         const token = await tokenize(card);
-                        const paymentResults = await createPayment(token);
+                        const verificationToken = await verifyBuyer(payments, token);
+                        const paymentResults = await createPayment(token, verificationToken);
                         displayPaymentResults('SUCCESS');
 
-                        // Now that payment is successful, you can perform additional actions here
-                        console.debug('Payment Success', paymentResults);
-
-                        // Example: Do something with paymentResults or perform additional tasks
-                        // For now, we'll just log the paymentResults
-                        console.debug('Payment Results:', paymentResults);
-                    } catch (error) {
+                        window.alert('Payment Success', paymentResults);
+                    }
+                    catch (error)
+                    {
                         cardButton.disabled = false;
                         displayPaymentResults('FAILURE');
                         window.alert('Payment failed: ' + error.message);
                     }
                 });
 
-            } catch (error) {
-                window.alert(error.message);
-            }
+            } catch (error) { window.alert(error.message); }
         });
     </script>
 </head>
