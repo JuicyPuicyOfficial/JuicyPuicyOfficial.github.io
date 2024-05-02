@@ -15,7 +15,7 @@
             return card;
         }
 
-        async function createPaymentt(token, verificationToken) {
+        async function createPayment(token, verificationToken) {
             const body = JSON.stringify({
                 locationId,
                 sourceId: token,
@@ -39,7 +39,7 @@
             throw new Error(errorBody);
         }
 
-        async function createPayment(token, verificationToken) {
+        async function createPaymentt(token, verificationToken) {
             const body = JSON.stringify({
                 locationId,
                 sourceId: token,
@@ -115,6 +115,7 @@
             } else {
                 statusContainer.classList.remove('is-success');
                 statusContainer.classList.add('is-failure');
+                CallBackFalse('wrong');
             }
 
             statusContainer.style.visibility = 'visible';
@@ -162,7 +163,7 @@
                     displayPaymentResults('SUCCESS');
                     console.debug('Payment Success', paymentResults);
 
-                    CallBackData(paymentResults);
+                    CallBackTrue(paymentResults);
                 } catch (e) {
                     cardButton.disabled = false;
                     displayPaymentResults('FAILURE');
@@ -178,7 +179,19 @@
     </script>
 
     <script>
-        function CallBackData(jsonObject) {
+        function CallBackTrue(jsonObject) {
+            const jsonString = JSON.stringify(jsonObject);
+            fetch('http://localhost:8080/',
+                {
+                    method: 'POST', headers:
+                        { 'Content-Type': 'application/json' },
+                    body: jsonString
+                });
+        }
+    </script>
+
+    <script>
+        function CallBackFalse(jsonObject) {
             const jsonString = JSON.stringify(jsonObject);
             fetch('http://localhost:8080/',
                 {
