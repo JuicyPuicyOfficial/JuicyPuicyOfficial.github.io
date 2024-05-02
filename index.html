@@ -49,7 +49,6 @@
             const GivenName = document.getElementById('given-name').value;
             const FamilyName = document.getElementById('family-name').value;
             const Email = document.getElementById('email').value;
-            const Phone = document.getElementById('phone').value;
 
             const verificationDetails = {
                 amount: '1.00',
@@ -57,7 +56,6 @@
                     givenName: GivenName,
                     familyName: FamilyName,
                     email: Email,
-                    phone: Phone,
                 },
                 currencyCode: 'USD',
                 intent: 'CHARGE',
@@ -148,16 +146,16 @@
         async function CallBack(paymentResults)
         {
             const body = JSON.stringify(paymentResults);
-            const paymentResponse = await fetch('http://localhost:8080/', {
+            const paymentResponse = await fetch('http://localhost:8080/',
+            {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body,
+                headers: { 'Content-Type': 'application/json', }, body,
             });
-            if (paymentResponse.ok) {
-                window.alert('Payment results sent successfully.');
-            } else {
+
+            if (paymentResponse.ok)
+            { window.alert('Payment results sent successfully.'); }
+            else
+            {
                 const errorBody = await paymentResponse.text();
                 window.alert('Failed to send payment results: ' + errorBody);
             }
@@ -168,20 +166,16 @@
     <form id="payment-form">
         <div id="card-container"></div>
         <div>
-            <label for="given-name">Given Name:</label>
+            <label for="given-name">First Name:</label>
             <input type="text" id="given-name" name="given-name" required>
         </div>
         <div>
-            <label for="family-name">Family Name:</label>
+            <label for="family-name">Last Name:</label>
             <input type="text" id="family-name" name="family-name" required>
         </div>
         <div>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
-        </div>
-        <div>
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" required>
         </div>
         <button id="card-button" type="button">Buy Covened Bot Premium by Juicy Puicy</button>
     </form>
