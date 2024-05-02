@@ -52,14 +52,20 @@
             }
         }
 
-        async function verifyBuyer(payments, token) {
+        async function verifyBuyer(payments, token)
+        {
+            const GivenName = document.getElementById('given-name').value;
+            const FamilyName = document.getElementById('family-name').value;
+            const Email = document.getElementById('email').value;
+            const Phone = document.getElementById('phone').value;
+
             const verificationDetails = {
                 amount: '1.00',
                 billingContact: {
-                    givenName: 'Juicy',
-                    familyName: 'Puicy',
-                    email: 'amenarts521@gmail.com',
-                    phone: '2173728134',
+                    givenName: GivenName,
+                    familyName: FamilyName,
+                    email: Email,
+                    phone: Phone,
                 },
                 currencyCode: 'USD',
                 intent: 'CHARGE',
@@ -134,8 +140,26 @@
 <body>
     <form id="payment-form">
         <div id="card-container"></div>
-        <button id="card-button" type="button">Pay $1.00</button>
+        <div>
+            <label for="given-name">Given Name:</label>
+            <input type="text" id="given-name" name="given-name" required>
+        </div>
+        <div>
+            <label for="family-name">Family Name:</label>
+            <input type="text" id="family-name" name="family-name" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        <button id="card-button" type="button">Buy Covened Bot Premium by Juicy Puicy</button>
     </form>
+    <div id="payment-status-container"></div>
+
     <div id="payment-status-container"></div>
 </body>
 </html>
