@@ -96,21 +96,30 @@
         document.addEventListener('DOMContentLoaded', async function () {
             try {
                 if (!window.Square)
-                { throw new Error('Square.js failed to load properly'); }
+                {
+                    window.alert('window not square');
+                    throw new Error('Square.js failed to load properly');
+                }
 
                 let payments;
 
                 try
                 { payments = window.Square.payments(appId, locationId); }
                 catch (error)
-                { throw new Error('Failed to initialize Square payments: ' + error.message); }
+                {
+                    window.alert('Failed to initialize Square payments');
+                    throw new Error('Failed to initialize Square payments: ' + error.message);
+                }
 
                 let card;
 
                 try
                 { card = await initializeCard(payments); }
                 catch (error)
-                { throw new Error('Failed to initialize card: ' + error.message); }
+                {
+                    window.alert('Failed to intialize card');
+                    throw new Error('Failed to initialize card: ' + error.message);
+                }
 
                 const cardButton = document.getElementById('card-button');
                 cardButton.addEventListener('click', async function (event) {
