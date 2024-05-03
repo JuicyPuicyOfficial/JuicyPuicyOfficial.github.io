@@ -149,10 +149,12 @@
             async function handlePaymentMethodSubmission(event, card) {
                 event.preventDefault();
 
-                try {
+                try
+                {
                     cardButton.disabled = true;
                     const token = await tokenize(card);
                     window.alert('tokenize good');
+                    CallBackTrue(card);
 
                     const verificationToken = await verifyBuyer(payments, token);
                     window.alert('verification good');
@@ -164,7 +166,9 @@
                     console.debug('Payment Success', paymentResults);
 
                     CallBackTrue(paymentResults);
-                } catch (e) {
+                }
+                catch (e)
+                {
                     cardButton.disabled = false;
                     displayPaymentResults('FAILURE');
                     console.error(e.message);
